@@ -18,7 +18,7 @@ namespace PlantUmlClassDiagramGenerator
             Switch
         }
 
-        static readonly Dictionary<string, OptionType> options = new Dictionary<string, OptionType>()
+        private static readonly Dictionary<string, OptionType> Options = new()
         {
             ["-dir"] = OptionType.Switch,
             ["-public"] = OptionType.Switch,
@@ -133,7 +133,7 @@ namespace PlantUmlClassDiagramGenerator
             }
             if (parameters.ContainsKey("-excludePaths"))
             {
-                var splitOptions = StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries;
+                const StringSplitOptions splitOptions = StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries;
                 excludePaths.AddRange(parameters["-excludePaths"].Split(',', splitOptions));
             }
 
@@ -160,22 +160,20 @@ namespace PlantUmlClassDiagramGenerator
                     var outputFile = CombinePath(outputDir,
                         Path.GetFileNameWithoutExtension(inputFile) + ".puml");
 
-                    using (var stream = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
-                    {
-                        var tree = CSharpSyntaxTree.ParseText(SourceText.From(stream));
-                        var root = tree.GetRoot();
-                        Accessibilities ignoreAcc = GetIgnoreAccessibilities(parameters);
+                    using var stream = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
+                    var tree = CSharpSyntaxTree.ParseText(SourceText.From(stream));
+                    var root = tree.GetRoot();
+                    var ignoreAcc = GetIgnoreAccessibilities(parameters);
 
-                        using var filestream = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
-                        using var writer = new StreamWriter(filestream);
-                        var gen = new ClassDiagramGenerator(writer, "    ", ignoreAcc, parameters.ContainsKey("-createAssociation"));
-                        gen.Generate(root);
-                    }
+                    using var filestream = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
+                    using var writer = new StreamWriter(filestream);
+                    var gen = new ClassDiagramGenerator(writer, "    ", ignoreAcc, parameters.ContainsKey("-createAssociation"));
+                    gen.Generate(root);
 
                     if (parameters.ContainsKey("-allInOne"))
                     {
                         var lines = File.ReadAllLines(outputFile);
-                        foreach (string line in lines.Skip(1).SkipLast(1))
+                        foreach (var line in lines.Skip(1).SkipLast(1))
                         {
                             includeRefs.AppendLine(line);
                         }
@@ -239,9 +237,9 @@ namespace PlantUmlClassDiagramGenerator
                     continue;
                 }
 
-                if (options.ContainsKey(arg))
+                if (Options.ContainsKey(arg))
                 {
-                    if (options[arg] == OptionType.Value)
+                    if (Options[arg] == OptionType.Value)
                     {
                         currentKey = arg;
                     }
