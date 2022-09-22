@@ -78,15 +78,7 @@ namespace PlantUmlClassDiagramGenerator
 
             try
             {
-                using var stream = new FileStream(inputFileName, FileMode.Open, FileAccess.Read);
-                var tree = CSharpSyntaxTree.ParseText(SourceText.From(stream));
-                var root = tree.GetRoot();
-                Accessibilities ignoreAcc = GetIgnoreAccessibilities(parameters);
-
-                using var filestream = new FileStream(outputFileName, FileMode.Create, FileAccess.Write);
-                using var writer = new StreamWriter(filestream);
-                var gen = new ClassDiagramGenerator(writer, "    ", ignoreAcc, parameters.ContainsKey("-createAssociation"));
-                gen.Generate(root);
+                GeneratePlantUml(parameters, inputFileName, outputFileName);
             }
             catch (Exception e)
             {
@@ -142,7 +134,7 @@ namespace PlantUmlClassDiagramGenerator
             var includeRefs = new StringBuilder();
             includeRefs.AppendLine("@startuml");
 
-            var error = false;
+            var failedFiles = new List<string>();
             foreach (var inputFile in files)
             {
                 if (excludePaths
@@ -155,20 +147,12 @@ namespace PlantUmlClassDiagramGenerator
                 Console.WriteLine($"Processing \"{inputFile}\"...");
                 try
                 {
-                    var outputDir = CombinePath(outputRoot, Path.GetDirectoryName(inputFile).Replace(inputRoot, ""));
+                    var outputDir = CombinePath(outputRoot, Path.GetDirectoryName(inputFile)?.Replace(inputRoot, ""));
                     Directory.CreateDirectory(outputDir);
                     var outputFile = CombinePath(outputDir,
                         Path.GetFileNameWithoutExtension(inputFile) + ".puml");
 
-                    using var stream = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
-                    var tree = CSharpSyntaxTree.ParseText(SourceText.From(stream));
-                    var root = tree.GetRoot();
-                    var ignoreAcc = GetIgnoreAccessibilities(parameters);
-
-                    using var filestream = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
-                    using var writer = new StreamWriter(filestream);
-                    var gen = new ClassDiagramGenerator(writer, "    ", ignoreAcc, parameters.ContainsKey("-createAssociation"));
-                    gen.Generate(root);
+                    GeneratePlantUml(parameters, inputFile, outputFile);
 
                     if (parameters.ContainsKey("-allInOne"))
                     {
@@ -187,18 +171,31 @@ namespace PlantUmlClassDiagramGenerator
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    error = true;
+                    failedFiles.Add(inputFile);
                 }
             }
             includeRefs.AppendLine("@enduml");
             File.WriteAllText(CombinePath(outputRoot, "include.puml"), includeRefs.ToString());
 
-            if (error)
+            if (failedFiles.Any())
             {
-                Console.WriteLine("There were files that could not be processed.");
+                Console.WriteLine("There were files that could not be processed:");
+                failedFiles.ForEach(file => Console.WriteLine(file + Environment.NewLine));
                 return false;
             }
             return true;
+        }
+        private static void GeneratePlantUml(Dictionary<string, string> parameters, string inputFile, string outputFile)
+        {
+            using var stream = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
+            var tree = CSharpSyntaxTree.ParseText(SourceText.From(stream));
+            var root = tree.GetRoot();
+            var ignoreAcc = GetIgnoreAccessibilities(parameters);
+
+            using var filestream = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
+            using var writer = new StreamWriter(filestream);
+            var gen = new ClassDiagramGenerator(writer, "    ", ignoreAcc, parameters.ContainsKey("-createAssociation"));
+            gen.Generate(root);
         }
 
         private static Accessibilities GetIgnoreAccessibilities(Dictionary<string, string> parameters)
@@ -207,7 +204,7 @@ namespace PlantUmlClassDiagramGenerator
             if (parameters.ContainsKey("-public"))
             {
                 ignoreAcc = Accessibilities.Private | Accessibilities.Internal
-                    | Accessibilities.Protected | Accessibilities.ProtectedInternal;
+                                                    | Accessibilities.Protected | Accessibilities.ProtectedInternal;
             }
             else if (parameters.ContainsKey("-ignore"))
             {
@@ -263,8 +260,8 @@ namespace PlantUmlClassDiagramGenerator
         private static string CombinePath(string first, string second)
         {
             return first.TrimEnd(Path.DirectorySeparatorChar)
-                + Path.DirectorySeparatorChar
-                + second.TrimStart(Path.DirectorySeparatorChar);
+                   + Path.DirectorySeparatorChar
+                   + second.TrimStart(Path.DirectorySeparatorChar);
         }
     }
 }

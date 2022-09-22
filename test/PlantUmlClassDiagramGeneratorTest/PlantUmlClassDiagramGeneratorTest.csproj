@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="uml\all.puml">
+    <None Update="uml\All.puml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="uml\GenericsType.puml">
@@ -54,13 +54,13 @@
     <None Update="uml\CurlyBrackets.puml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="uml\public.puml">
+    <None Update="uml\Public.puml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="uml\withoutPrivate.puml">
+    <None Update="uml\WithoutPrivate.puml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="uml\nullableType.puml">
+    <None Update="uml\NullableType.puml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

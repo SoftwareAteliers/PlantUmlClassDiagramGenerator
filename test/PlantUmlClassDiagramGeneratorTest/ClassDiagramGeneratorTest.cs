@@ -13,7 +13,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestAll()
         {
-            var code = File.ReadAllText("testData\\inputClasses.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}InputClasses.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -24,7 +24,7 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\all.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}All.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
@@ -33,7 +33,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestPublic()
         {
-            var code = File.ReadAllText("testData\\inputClasses.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}InputClasses.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -42,11 +42,11 @@ namespace PlantUmlClassDiagramGeneratorTest
             {
                 var gen = new ClassDiagramGenerator(writer, "    ",
                     Accessibilities.Private | Accessibilities.Internal
-                    | Accessibilities.Protected | Accessibilities.ProtectedInternal);
+                                            | Accessibilities.Protected | Accessibilities.ProtectedInternal);
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\public.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}Public.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
@@ -55,7 +55,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestWithoutPrivate()
         {
-            var code = File.ReadAllText("testData\\inputClasses.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}InputClasses.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -66,7 +66,7 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\withoutPrivate.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}WithoutPrivate.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
@@ -75,7 +75,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestGenericsTypes()
         {
-            var code = File.ReadAllText("testData\\GenericsType.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}GenericsType.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -87,12 +87,12 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\genericsType.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}GenericsType.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
         }
-        
+
         [TestMethod]
         public void NullableTestNullableTypes()
         {
@@ -108,7 +108,7 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(Path.Combine("uml", "nullableType.puml")), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText(Path.Combine("uml", "NullableType.puml")), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
@@ -117,7 +117,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestAtPrefixType()
         {
-            var code = File.ReadAllText("testData\\AtPrefixType.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}AtPrefixType.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -129,7 +129,7 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\AtPrefixType.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}AtPrefixType.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);
@@ -138,7 +138,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         [TestMethod]
         public void GenerateTestCurlyBrackets()
         {
-            var code = File.ReadAllText("testData\\CurlyBrackets.cs");
+            var code = File.ReadAllText($"testData{Path.DirectorySeparatorChar}CurlyBrackets.cs");
             var tree = CSharpSyntaxTree.ParseText(code);
             var root = tree.GetRoot();
 
@@ -150,7 +150,7 @@ namespace PlantUmlClassDiagramGeneratorTest
                 gen.Generate(root);
             }
 
-            var expected = ConvertNewLineCode(File.ReadAllText(@"uml\CurlyBrackets.puml"), Environment.NewLine);
+            var expected = ConvertNewLineCode(File.ReadAllText($"uml{Path.DirectorySeparatorChar}CurlyBrackets.puml"), Environment.NewLine);
             var actual = output.ToString();
             Console.Write(actual);
             Assert.AreEqual(expected, actual);

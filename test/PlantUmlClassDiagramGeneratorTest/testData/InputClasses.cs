@@ -26,7 +26,7 @@ namespace PlantUmlClassDiagramGeneratorTest
         }
 
         public static string StaticMethod() { return strField; }
-        public void ExpressonBodiedMethod(int x) => x * x;
+        public void ExpressionBodiedMethod(int x) => x * x;
     }
 
     internal abstract class ClassB
